@@ -1,0 +1,9 @@
+// Top-level build file. Plugin versions are declared here and applied in :app.
+// If these versions conflict on your machine, bump them together (AGP <-> Gradle
+// wrapper <-> Chaquopy must be mutually compatible -- see android-app/README.md).
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.24' apply false
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.24' apply false
+    id 'com.chaquo.python' version '15.0.1' apply false
+}
