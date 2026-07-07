@@ -11,6 +11,7 @@ import pytest
 from aerogaze import detect, pipeline, synth
 from aerogaze.catalog import load_hyg
 
+
 CASES = [
     # lat, lon, utc, alt, az, roll
     (38.99, -77.03, "2026-06-26T04:30:00", 90.0, 0.0, 0.0),

@@ -8,6 +8,7 @@ Zero dependencies — just `python3 server.py`. Keeps messages in memory.
 Run it on a laptop on the SAME Wi-Fi as the relay + recipient devices, then set
 `serverUrl` in AppViewModel.kt to  http://<this-laptop-LAN-IP>:8080
 """
+
 import json
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
