@@ -8,6 +8,7 @@ import numpy as np
 from scipy import ndimage
 
 
+
 def detect_stars2(img, fwhm=2.6, thresh_sigma=4.0, max_stars=150, bg_cell=64,
                   min_sharp=1.3, max_area=80):
     img = np.asarray(img, dtype=float)

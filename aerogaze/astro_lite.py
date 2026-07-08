@@ -9,7 +9,7 @@ Core relationship (the whole project)::
     longitude = RA_zenith - GMST(UTC)        # east-positive, normalized to +-180 deg
 
 We precess the ICRS/J2000 zenith vector to the mean equator/equinox of date before
-reading off RA/Dec, because over ~26 years since J2000 precession is ~0.36 deg
+
 (~40 km) -- far larger than our error budget. Nutation and the equation of the
 equinoxes (~arcsec) are neglected.
 """

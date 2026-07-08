@@ -5,6 +5,7 @@ plugins {
     id 'com.chaquo.python'
 }
 
+
 android {
     namespace 'com.aerogaze.app'
     compileSdk 34

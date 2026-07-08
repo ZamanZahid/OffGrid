@@ -10,3 +10,4 @@ protocol MessageBackend {
     func startListening(recipientId: String, onMessage: @escaping (Envelope) -> Void)
     func stopListening()
 }
+

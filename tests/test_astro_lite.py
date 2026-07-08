@@ -9,6 +9,7 @@ import pytest
 
 from aerogaze import astro_lite
 
+
 astropy = pytest.importorskip("astropy")
 import astropy.units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord

@@ -6,6 +6,7 @@ runs identically on a laptop and on-device (Chaquopy) inside an Android app.
 """
 
 
+
 __all__ = [
     "geometry",
     "catalog",

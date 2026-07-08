@@ -5,3 +5,4 @@ astropy        # oracle for validating astro_lite; also used by the synthetic ge
 pillow         # image I/O for the demo + EXIF
 matplotlib     # demo visuals
 pytest         # tests
+
