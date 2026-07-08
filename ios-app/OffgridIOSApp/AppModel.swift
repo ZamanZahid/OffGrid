@@ -6,6 +6,8 @@ enum Role: String, CaseIterable, Identifiable {
     case recipient = "Recipient"
     var id: String { rawValue }
 
+
+
     var icon: String {
         switch self {
         case .sender:    return "paperplane.fill"

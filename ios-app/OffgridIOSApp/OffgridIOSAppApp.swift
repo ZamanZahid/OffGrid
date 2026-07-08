@@ -11,5 +11,8 @@ struct OffgridIOSAppApp: App {
             }
             .environmentObject(app)
         }
+
+
+        
     }
 }
