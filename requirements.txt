@@ -6,3 +6,19 @@ pillow         # image I/O for the demo + EXIF
 matplotlib     # demo visuals
 pytest         # tests
 
+# Laptop toolkit (build assets + validate). On-device only needs numpy + scipy.
+numpy
+scipy
+astropy        # oracle for validating astro_lite; also used by the synthetic generator
+pillow         # image I/O for the demo + EXIF
+matplotlib     # demo visuals
+pytest         # tests
+
+# Laptop toolkit (build assets + validate). On-device only needs numpy + scipy.
+numpy
+scipy
+astropy        # oracle for validating astro_lite; also used by the synthetic generator
+pillow         # image I/O for the demo + EXIF
+matplotlib     # demo visuals
+pytest         # tests
+

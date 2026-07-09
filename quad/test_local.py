@@ -35,3 +35,5 @@ for rad in (18.0, 25.0, 35.0):
         print(f"  radius {rad:4.0f} deg -> {r['n_inliers']}/{r['n_used']} inl, resid "
               f"{r['residual_arcsec']:.0f}\", fov {r['fov_deg']:.1f}, k1={r['k1']:+.3f}, "
               f"center RA={ra:.1f} Dec={dec:+.1f}")
+import sys
+sys.path.insert(0, r"C:\Users\Leo\BlairHacks"); sys.path.insert(0, r"C:\Users\Leo\BlairHacks\quad")
