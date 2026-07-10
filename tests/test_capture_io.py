@@ -13,7 +13,6 @@ CAT = load_hyg(mag_limit=6.5)
 INDEX = solve.load_index()
 
 
-
 def _err_km(a, b, c, d):
     dlat, dlon = np.radians(c - a), np.radians(d - b)
     h = np.sin(dlat / 2) ** 2 + np.cos(np.radians(a)) * np.cos(np.radians(c)) * np.sin(dlon / 2) ** 2

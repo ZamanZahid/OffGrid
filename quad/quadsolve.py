@@ -11,7 +11,6 @@ from __future__ import annotations
 import os
 import sys
 
-
 sys.path.insert(0, r"C:\Users\Leo\BlairHacks")
 
 import numpy as np
