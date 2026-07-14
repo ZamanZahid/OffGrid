@@ -9,7 +9,6 @@ import CryptoKit
 enum DemoKeys {
     static let recipientId = "C"
 
-
     /// The recipient ("C") private key — only the Recipient device uses this.
     static let recipientPrivateKey: Curve25519.KeyAgreement.PrivateKey = {
         let seed = SHA256.hash(data: Data("relay-demo-recipient-2025".utf8))

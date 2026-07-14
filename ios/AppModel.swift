@@ -11,7 +11,6 @@ enum Role: String, CaseIterable, Identifiable {
         case .sender:    return "paperplane.fill"
         case .relay:     return "antenna.radiowaves.left.and.right"
         case .recipient: return "tray.and.arrow.down.fill"
-       
         }
     }
 }

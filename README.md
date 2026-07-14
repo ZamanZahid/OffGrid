@@ -35,3 +35,19 @@ Offgrid/
 └── requirements.txt
 ```
 
+
+
+
+
+git status
+
+git add .
+
+git commit -m "Update AeroGaze/Relay logic across iOS and server; remove obsolete Python scripts and tests"
+
+git push origin main
+
+
+
+
+
