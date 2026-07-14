@@ -1,22 +1,37 @@
 <div align="center">
 
-# Offgrid, Aerogaze + Relay
+# Offgrid
+Doesn't matter if you're in the middle of the ocean, lost in a forest, in the middle of a natural disaster, or just somewhere cell towers don't reach, GPS can get jammed, towers go down in disasters, and most of the planet still has zero coverage. When that happens you lose two things at once: knowing where you are, and any way to tell someone.
 
-Two offline systems for when the grid goes down: find your location from the stars, and send a message with zero signal.
+AeroGaze fixes the first one, point your phone at the night sky and it works out your exact position, no satellites, no towers, no internet. Relay fixes the second problem, as it hands your message off to a nearby stranger's phone (encrypted, so they can't read it, and works kind of like Apple's Find My, but for messages), which passes it along until it reaches the internet, without ever being able to read it.
 
 ![AeroGaze Screenshot](./orion_detect.png)
 
+</div>
 
-**AeroGaze:**
-- Handle display/EXIF rotation for real-photo capture paths
-- Foreground-service gravity sampler for better timing accuracy
-- Expand star catalog coverage
-- Enhanced mobile UI + offline map/pin integration
+---
 
-**Relay:**
-- Multi-hop mesh relaying (relay → relay → … → internet)
-- Store-and-forward when no relay is in range yet (delay-tolerant networking)
-- Real key exchange (QR code / directory) instead of a hardcoded demo key
-- Background relaying via a foreground service with persistent Nearby advertising
-- Spam/abuse limits and relayer privacy protections
-- Swappable realtime backend (e.g. Firebase/Ktor WebSocket) in place of HTTP polling — `RestBackend` already implements a generic `MessageBackend` interface, so this is a drop-in change
+This repo has two separate, offline-first tools that deal with that, but to run it you can simply open either the android-app/ or the ios-app/ folder:
+
+1. **AeroGaze** - Finds your exact latitude and longitude (coordinates) from a single photo of the night sky (uses stars/constellations), your phone's gravity sensor, and the current time. No GPS, no cell service, no Wi-Fi.
+2. **Relay** — end-to-end encrypted messaging that hands your message to a nearby stranger's phone over Bluetooth/Wi-Fi Direct, which passes it on to the internet once it's back in range. All it ever sees is unreadable ciphertext.
+
+---
+
+## Project Structure
+
+```
+Offgrid/
+├── aerogaze/          # Core celestial positioning engine (pure NumPy/SciPy)
+├── android/           # Standalone Android app — Relay only
+├── android-app/       # Unified Android app — AeroGaze (via Chaquopy) + Relay
+├── ios/               # iOS app — Relay only (Swift, MultipeerConnectivity)
+├── ios-app/           # Unified iOS app — AeroGaze (via Chaquopy) + Relay
+├── server/              # Lightweight Python HTTP server for Relay
+├── scripts/             # Demo & utility scripts (e.g. demo.py)
+├── data/                  # Star catalogs + prebuilt quad-hash indices
+├── quad/                 # Standalone quad-based star detection/solving utilities
+├── tests/                 # pytest suite for the AeroGaze engine
+└── requirements.txt
+```
+
