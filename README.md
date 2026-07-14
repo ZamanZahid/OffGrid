@@ -36,6 +36,22 @@ Offgrid/
 ```
 
 
+---
+
+## 1. AeroGaze — Offline Celestial Positioning
+
+AeroGaze basically uses star tracking, mixed with astronomical coordinate correction, to find your position from a night-sky photo with zero network dependency.
+
+### How it works
+1. **Capture** — take a photo of the night sky.
+2. **Detect** — find the stars in the photo (`detect.py`).
+3. **Pattern match** — group stars into "quads" and match them against a star catalog (`quadmobile.py` / `solve.py`).
+---
+## 2. Relay — Zero-Signal E2E Encrypted Messaging
+
+Relay is basically Find My, but for messages. You send something with zero signal and your phone hands it to a nearby stranger's phone, which carries it along until it gets internet, without ever being able to read what's inside.
+
+---
 
 
 

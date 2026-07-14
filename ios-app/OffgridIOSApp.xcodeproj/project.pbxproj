@@ -22,6 +22,9 @@
 		0A0A0000000000000000000000000019 /* Envelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A000000000000000000000000001A /* Models/Envelope.swift */; };
 		0A0A000000000000000000000000001B /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A000000000000000000000000001C /* Models/Crypto.swift */; };
 		0A0A000000000000000000000000001D /* DemoKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A000000000000000000000000001E /* Models/DemoKeys.swift */; };
+		0A0A0000000000000000000000000034 /* OffgridTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000000000000035 /* Views/OffgridTheme.swift */; };
+		0A0A0000000000000000000000000036 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000000000000037 /* Networking/ServerConfig.swift */; };
+		0A0A0000000000000000000000000038 /* NightSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000000000000039 /* Views/NightSkyView.swift */; };
 		0A0A000000000000000000000000001F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000000000000020 /* Assets.xcassets */; };
 		0A0A0000000000000000000000000021 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000000000000022 /* Preview Content/Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -42,6 +45,9 @@
 		0A0A000000000000000000000000001A /* Envelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/Envelope.swift; sourceTree = "<group>"; };
 		0A0A000000000000000000000000001C /* Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/Crypto.swift; sourceTree = "<group>"; };
 		0A0A000000000000000000000000001E /* DemoKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/DemoKeys.swift; sourceTree = "<group>"; };
+		0A0A0000000000000000000000000035 /* OffgridTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/OffgridTheme.swift; sourceTree = "<group>"; };
+		0A0A0000000000000000000000000037 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking/ServerConfig.swift; sourceTree = "<group>"; };
+		0A0A0000000000000000000000000039 /* NightSkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/NightSkyView.swift; sourceTree = "<group>"; };
 		0A0A0000000000000000000000000020 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A0A0000000000000000000000000022 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Content/Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0A0A0000000000000000000000000024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -71,7 +77,10 @@
 				0A0A000000000000000000000000000E /* Views/RecipientView.swift */,
 				0A0A0000000000000000000000000010 /* Views/StatusTimelineView.swift */,
 				0A0A0000000000000000000000000012 /* Views/SkygazeView.swift */,
+				0A0A0000000000000000000000000035 /* Views/OffgridTheme.swift */,
+				0A0A0000000000000000000000000039 /* Views/NightSkyView.swift */,
 				0A0A0000000000000000000000000014 /* Networking/MultipeerSession.swift */,
+				0A0A0000000000000000000000000037 /* Networking/ServerConfig.swift */,
 				0A0A0000000000000000000000000016 /* Networking/RESTBackend.swift */,
 				0A0A0000000000000000000000000018 /* Networking/MessageBackend.swift */,
 				0A0A000000000000000000000000001A /* Models/Envelope.swift */,
@@ -178,6 +187,9 @@
 				0A0A000000000000000000000000000D /* Views/RecipientView.swift in Sources */,
 				0A0A000000000000000000000000000F /* Views/StatusTimelineView.swift in Sources */,
 				0A0A0000000000000000000000000011 /* Views/SkygazeView.swift in Sources */,
+				0A0A0000000000000000000000000034 /* OffgridTheme.swift in Sources */,
+				0A0A0000000000000000000000000036 /* ServerConfig.swift in Sources */,
+				0A0A0000000000000000000000000038 /* NightSkyView.swift in Sources */,
 				0A0A0000000000000000000000000013 /* Networking/MultipeerSession.swift in Sources */,
 				0A0A0000000000000000000000000015 /* Networking/RESTBackend.swift in Sources */,
 				0A0A0000000000000000000000000017 /* Networking/MessageBackend.swift in Sources */,

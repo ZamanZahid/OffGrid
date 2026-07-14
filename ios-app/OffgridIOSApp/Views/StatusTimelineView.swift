@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Vertical checklist that fills in as the message travels. This little
-/// animation is the demo's "wow" — an offline phone reaching "Delivered ✓".
 struct StatusTimelineView: View {
     let stage: SendStage
 
@@ -9,22 +7,33 @@ struct StatusTimelineView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
+            Text("Delivery status")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(AppTheme.muted)
+                .textCase(.uppercase)
+                .frame(maxWidth: .infinity, alignment: .center)
+
             ForEach(steps, id: \.self) { step in
                 HStack(spacing: 12) {
-                    Image(systemName: reached(step) ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(reached(step) ? .green : .secondary)
-                        .imageScale(.large)
+                    ZStack {
+                        Circle()
+                            .fill(reached(step) ? AppTheme.success.opacity(0.18) : AppTheme.card)
+                            .frame(width: 28, height: 28)
+                        Image(systemName: reached(step) ? "checkmark" : "circle")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(reached(step) ? AppTheme.success : AppTheme.muted)
+                    }
+
                     Text(step.rawValue)
-                        .foregroundStyle(reached(step) ? .primary : .secondary)
-                    Spacer()
+                        .font(.subheadline)
+                        .foregroundStyle(reached(step) ? .white : AppTheme.muted)
+
+                    Spacer(minLength: 0)
                 }
-                .animation(.easeInOut, value: stage)
+                .animation(.easeInOut(duration: 0.25), value: stage)
             }
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.4))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .offgridCard()
     }
 
     private func reached(_ step: SendStage) -> Bool {

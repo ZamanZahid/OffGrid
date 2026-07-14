@@ -21,7 +21,15 @@ final class RESTBackend: MessageBackend {
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = try JSONEncoder.relay.encode(envelope)
-        _ = try await URLSession.shared.data(for: req)
+        req.timeoutInterval = 10
+
+        let (_, response) = try await URLSession.shared.data(for: req)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard (200...299).contains(http.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
     }
 
     func startListening(recipientId: String, onMessage: @escaping (Envelope) -> Void) {

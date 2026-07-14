@@ -4,38 +4,70 @@ struct SenderView: View {
     @EnvironmentObject var app: AppModel
 
     var body: some View {
-        VStack(spacing: 20) {
-            // Proof this phone is offline + whether a relay is in range.
+        OffgridPageContainer(contentTopPadding: 20) {
+            OffgridSectionHeader(
+                title: "Sender",
+                subtitle: "Write a message and hand it to a nearby relay over Bluetooth. (Like How Find-My Works.)",
+                largeTitle: true,
+                topPadding: 0
+            )
+
+            Spacer(minLength: 12)
+
             HStack {
-                Label("No internet", systemImage: "wifi.slash")
-                    .foregroundStyle(.red)
+                ConnectivityBadge()
                 Spacer()
-                Label(app.peerCount > 0 ? "\(app.peerCount) relay nearby" : "No relay yet",
-                      systemImage: app.peerCount > 0 ? "dot.radiowaves.left.and.right" : "magnifyingglass")
-                    .foregroundStyle(app.peerCount > 0 ? .green : .secondary)
+                peerBadge
             }
-            .font(.footnote)
 
             StatusTimelineView(stage: app.sendStage)
 
-            Spacer()
+            Spacer(minLength: 8)
 
-            TextField("Type a message…", text: $app.draft, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
-                .lineLimit(1...4)
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Message")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppTheme.muted)
+                    .textCase(.uppercase)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                TextField("Type a message…", text: $app.draft, axis: .vertical)
+                    .lineLimit(1...4)
+                    .multilineTextAlignment(.center)
+                    .padding(14)
+                    .background(AppTheme.card)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(AppTheme.border, lineWidth: 1)
+                    )
+            }
 
             Button {
                 app.sendDraft()
             } label: {
                 Label("Send via nearby relay", systemImage: "paperplane.fill")
+                    .font(.headline)
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
             }
             .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .tint(AppTheme.accent)
             .disabled(app.draft.trimmingCharacters(in: .whitespaces).isEmpty || app.peerCount == 0)
         }
-        .padding()
-        .navigationTitle("Sender")
-        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var peerBadge: some View {
+        HStack(spacing: 8) {
+            Image(systemName: app.peerCount > 0 ? "dot.radiowaves.left.and.right" : "magnifyingglass")
+            Text(app.peerCount > 0 ? "\(app.peerCount) relay nearby" : "No relay yet")
+                .fontWeight(.medium)
+        }
+        .font(.caption)
+        .foregroundStyle(app.peerCount > 0 ? AppTheme.success : AppTheme.muted)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background((app.peerCount > 0 ? AppTheme.success : Color.white).opacity(0.12))
+        .clipShape(Capsule())
     }
 }

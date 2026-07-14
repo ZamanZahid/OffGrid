@@ -1,16 +1,49 @@
 import SwiftUI
 
 enum Role: String, CaseIterable, Identifiable {
-    case sender    = "Sender (offline)"
-    case relay     = "Relay (online)"
-    case recipient = "Recipient"
+    case sender
+    case relay
+    case recipient
+
     var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .sender: return "Sender"
+        case .relay: return "Relay"
+        case .recipient: return "Recipient"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .sender: return "Send messages without internet"
+        case .relay: return "Bridge nearby phones to the cloud\n(like how find my works)"
+        case .recipient: return "Receive decrypted messages"
+        }
+    }
 
     var icon: String {
         switch self {
-        case .sender:    return "paperplane.fill"
-        case .relay:     return "antenna.radiowaves.left.and.right"
+        case .sender: return "paperplane.fill"
+        case .relay: return "antenna.radiowaves.left.and.right"
         case .recipient: return "tray.and.arrow.down.fill"
+        }
+    }
+
+    var defaultTab: AppTab {
+        switch self {
+        case .sender: return .send
+        case .relay: return .relay
+        case .recipient: return .inbox
+        }
+    }
+
+    var visibleTabs: [AppTab] {
+        switch self {
+        case .sender: return [.send, .skygaze]
+        case .relay: return [.relay, .skygaze]
+        case .recipient: return [.inbox, .skygaze]
         }
     }
 }
@@ -26,11 +59,8 @@ enum SendStage: String {
 /// Single source of truth. One app, three roles — pick one per device.
 final class AppModel: ObservableObject {
 
-    // 🔧 CHANGE THIS to your server machine's LAN IP (or ngrok URL).
-    //    Find it on the laptop running server.py:  macOS → System Settings ▸ Wi-Fi ▸ Details.
-    private let serverURL = URL(string: "http://192.168.0.164:8080")!
-
     @Published var role: Role?
+    @Published var selectedTab: AppTab = .send
     @Published var peerCount: Int = 0
 
     // Sender
@@ -42,14 +72,32 @@ final class AppModel: ObservableObject {
 
     // Recipient — decrypted inbox
     @Published var inbox: [InboxMessage] = []
+    
+    // 7 days so we don't lose messages if the app is deleted
+    private static let inboxRetention: TimeInterval = 7 * 24 * 60 * 60
 
     private var mpc: MultipeerSession?
-    private var backend: MessageBackend?
+    private var relayBackend: MessageBackend?
+    private var inboxBackend: MessageBackend?
+    private var inboxCleanupTask: Task<Void, Never>?
+
+    // MARK: - Navigation
+
+    func goHome() {
+        teardown()
+        role = nil
+        selectedTab = .send
+    }
 
     // MARK: - Role selection
 
-    func choose(role: Role) {
+    func choose(role: Role, tab: AppTab? = nil) {
+        teardown()
         self.role = role
+        selectedTab = tab ?? role.defaultTab
+
+        startInboxPolling()
+
         switch role {
         case .sender:
             let mpc = MultipeerSession(displayName: "A-sender")
@@ -64,16 +112,53 @@ final class AppModel: ObservableObject {
             mpc.onPeersChanged = { [weak self] peers in self?.peerCount = peers.count }
             mpc.onReceive = { [weak self] data, _ in self?.relayReceived(data) }
             self.mpc = mpc
-            self.backend = RESTBackend(baseURL: serverURL)
+            self.relayBackend = RESTBackend(baseURL: ServerConfig.baseURL)
             mpc.start()
 
         case .recipient:
-            let backend = RESTBackend(baseURL: serverURL)
-            self.backend = backend
-            backend.startListening(recipientId: DemoKeys.recipientId) { [weak self] env in
-                self?.recipientReceived(env)
+            peerCount = 0
+        }
+    }
+
+    func enterSkygaze() {
+        choose(role: .sender, tab: .skygaze)
+    }
+
+    private func teardown() {
+        mpc?.stop()
+        mpc = nil
+        relayBackend = nil
+        inboxBackend?.stopListening()
+        inboxBackend = nil
+        inboxCleanupTask?.cancel()
+        inboxCleanupTask = nil
+        peerCount = 0
+    }
+
+    private func startInboxPolling() {
+        purgeExpiredInboxMessages()
+        startInboxCleanup()
+
+        let backend = RESTBackend(baseURL: ServerConfig.baseURL)
+        inboxBackend = backend
+        backend.startListening(recipientId: DemoKeys.recipientId) { [weak self] env in
+            self?.recipientReceived(env)
+        }
+    }
+
+    private func startInboxCleanup() {
+        inboxCleanupTask?.cancel()
+        inboxCleanupTask = Task { [weak self] in
+            while !Task.isCancelled {
+                await MainActor.run { self?.purgeExpiredInboxMessages() }
+                try? await Task.sleep(nanoseconds: 60_000_000_000)
             }
         }
+    }
+
+    private func purgeExpiredInboxMessages() {
+        let cutoff = Date().addingTimeInterval(-Self.inboxRetention)
+        inbox.removeAll { $0.at < cutoff }
     }
 
     // MARK: - Sender
@@ -98,7 +183,6 @@ final class AppModel: ObservableObject {
     }
 
     private func senderReceived(_ data: Data) {
-        // The only thing the relay sends back is an ACK.
         if (try? JSONDecoder.relay.decode(Ack.self, from: data)) != nil {
             sendStage = .delivered
         }
@@ -122,16 +206,18 @@ final class AppModel: ObservableObject {
                                       status: "uploading…"), at: 0)
         Task {
             do {
-                try await backend?.upload(env)
+                try await relayBackend?.upload(env)
                 await MainActor.run {
                     self.updateRelay(env.id, status: "delivered to cloud ✓")
-                    // Tell the offline sender it landed.
                     if let ack = try? JSONEncoder.relay.encode(Ack(ackId: env.id)) {
                         self.mpc?.send(ack)
                     }
                 }
             } catch {
-                await MainActor.run { self.updateRelay(env.id, status: "upload failed") }
+                await MainActor.run {
+                    self.updateRelay(env.id, status: "upload failed — is server running?")
+                }
+                print("relay upload error:", error)
             }
         }
     }
@@ -145,10 +231,14 @@ final class AppModel: ObservableObject {
     // MARK: - Recipient
 
     private func recipientReceived(_ env: Envelope) {
+        let cutoff = Date().addingTimeInterval(-Self.inboxRetention)
+        guard env.createdAt >= cutoff else { return }
+
         let text = (try? RelayCrypto.open(env, with: DemoKeys.recipientPrivateKey))
             ?? "⚠️ could not decrypt"
         guard !inbox.contains(where: { $0.id == env.id }) else { return }
         inbox.insert(InboxMessage(id: env.id, text: text, at: env.createdAt), at: 0)
+        purgeExpiredInboxMessages()
     }
 }
 
