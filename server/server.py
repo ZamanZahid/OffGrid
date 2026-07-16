@@ -93,6 +93,9 @@ class Handler(BaseHTTPRequestHandler):
                   f"({len(ct)} b64 chars of ciphertext - unreadable to us)")
             return self._send_json(200, {"ok": True})
 
+        if path == "/health":
+            return self._send_json(200, {"ok": True, "messages": len(MESSAGES)})
+
         if path == "/demo-solve":
             try:
                 proc = subprocess.run(
@@ -142,6 +145,8 @@ class Handler(BaseHTTPRequestHandler):
             recipient = parse_qs(parsed.query).get("recipient", [""])[0]
             out = [m for m in MESSAGES if m.get("recipientId") == recipient]
             return self._send_json(200, out)
+        if parsed.path == "/health":
+            return self._send_json(200, {"ok": True, "messages": len(MESSAGES)})
         return self._send_json(404, {"error": "not found"})
 
     def log_message(self, *args):

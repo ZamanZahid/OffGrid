@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RelayView: View {
     @EnvironmentObject var app: AppModel
+    @State private var serverHealthy: Bool? = nil
 
     var body: some View {
         OffgridPageContainer(contentTopPadding: 36) {
@@ -11,10 +12,15 @@ struct RelayView: View {
                 topPadding: 8
             )
 
-            HStack {
+            HStack(spacing: 12) {
                 ConnectivityBadge()
                 Spacer()
                 peerBadge
+                serverBadge
+            }
+            .onAppear { checkServerHealth() }
+            .onReceive(Timer.publish(every: 3.0, on: .main, in: .common).autoconnect()) { _ in
+                checkServerHealth()
             }
 
             Text("Nearby senders hand off ciphertext here. Your phone uploads it when internet is available.")
@@ -40,7 +46,7 @@ struct RelayView: View {
     private var peerBadge: some View {
         HStack(spacing: 8) {
             Image(systemName: "point.3.connected.trianglepath.dotted")
-            Text(app.peerCount > 0 ? "\(app.peerCount) device(s) connected" : "Waiting for devices")
+            Text(app.peerCount > 0 ? "\(app.peerCount) device(s)" : "No devices")
                 .fontWeight(.medium)
         }
         .font(.caption)
@@ -49,6 +55,43 @@ struct RelayView: View {
         .padding(.vertical, 8)
         .background((app.peerCount > 0 ? AppTheme.success : Color.white).opacity(0.12))
         .clipShape(Capsule())
+    }
+
+    private var serverBadge: some View {
+        HStack(spacing: 6) {
+            Image(systemName: serverHealthy == true ? "checkmark.circle.fill" : serverHealthy == false ? "xmark.circle.fill" : "questionmark.circle.fill")
+            Text(serverHealthy == true ? "Connected" : serverHealthy == false ? "Unreachable" : "Checking…")
+                .fontWeight(.medium)
+        }
+        .font(.caption)
+        .foregroundStyle(serverHealthy == true ? AppTheme.success : serverHealthy == false ? AppTheme.danger : AppTheme.muted)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background((
+            serverHealthy == true ? AppTheme.success :
+            serverHealthy == false ? AppTheme.danger :
+            Color.white
+        ).opacity(0.12))
+        .clipShape(Capsule())
+    }
+
+    private func checkServerHealth() {
+        Task {
+            let url = ServerConfig.baseURL.appendingPathComponent("health")
+            do {
+                var req = URLRequest(url: url)
+                req.timeoutInterval = 3
+                let (_, response) = try await URLSession.shared.data(for: req)
+                if let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) {
+                    await MainActor.run { serverHealthy = true }
+                } else {
+                    await MainActor.run { serverHealthy = false }
+                }
+            } catch {
+                await MainActor.run { serverHealthy = false }
+                print("Server health check failed:", error)
+            }
+        }
     }
 
     private var emptyState: some View {
@@ -88,7 +131,7 @@ struct RelayView: View {
 
             Text(entry.status)
                 .font(.caption)
-                .foregroundStyle(entry.status.contains("✓") ? AppTheme.success : AppTheme.danger)
+                .foregroundStyle(entry.status.contains("✓") ? AppTheme.success : entry.status.contains("retrying") ? AppTheme.warning : AppTheme.danger)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .offgridCard(padding: 14)

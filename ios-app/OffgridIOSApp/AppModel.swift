@@ -206,20 +206,54 @@ final class AppModel: ObservableObject {
                                       status: "uploading…"), at: 0)
         Task {
             do {
-                try await relayBackend?.upload(env)
+                try await self.uploadWithRetry(env)
+            } catch {
+                await MainActor.run {
+                    self.updateRelay(env.id, status: "upload failed")
+                }
+                if let urlError = error as? URLError {
+                    print("Relay upload network error:", urlError.code, urlError.localizedDescription)
+                    print("  URL attempted:", urlError.failingURL?.absoluteString ?? "unknown")
+                    print("  Server:", ServerConfig.baseURLString)
+                } else {
+                    print("Relay upload error:", error)
+                }
+            }
+        }
+    }
+
+    private func uploadWithRetry(_ env: Envelope) async throws {
+        guard let relayBackend else {
+            throw URLError(.unknown)
+        }
+
+        let maxAttempts = 8
+        var lastError: Error?
+
+        for attempt in 1...maxAttempts {
+            do {
+                try await relayBackend.upload(env)
                 await MainActor.run {
                     self.updateRelay(env.id, status: "delivered to cloud ✓")
                     if let ack = try? JSONEncoder.relay.encode(Ack(ackId: env.id)) {
                         self.mpc?.send(ack)
                     }
                 }
+                return
             } catch {
+                lastError = error
+                let status = attempt < maxAttempts ? "retrying \(attempt)/\(maxAttempts)…" : "upload failed"
                 await MainActor.run {
-                    self.updateRelay(env.id, status: "upload failed — is server running?")
+                    self.updateRelay(env.id, status: status)
                 }
-                print("relay upload error:", error)
+
+                if attempt < maxAttempts {
+                    try? await Task.sleep(nanoseconds: 2_000_000_000)
+                }
             }
         }
+
+        throw lastError ?? URLError(.badServerResponse)
     }
 
     private func updateRelay(_ id: UUID, status: String) {

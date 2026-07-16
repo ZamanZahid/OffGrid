@@ -9,27 +9,48 @@ import Foundation
 final class RESTBackend: MessageBackend {
 
     private let baseURL: URL
+    private let candidateURLs: [URL]
+    private var activeBaseURL: URL
     private var pollTask: Task<Void, Never>?
     private var seenIDs = Set<UUID>()
 
     init(baseURL: URL) {
         self.baseURL = baseURL
+        self.candidateURLs = [baseURL] + ServerConfig.fallbackURLs.filter { $0 != baseURL }
+        self.activeBaseURL = baseURL
     }
 
     func upload(_ envelope: Envelope) async throws {
-        var req = URLRequest(url: baseURL.appendingPathComponent("send"))
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.httpBody = try JSONEncoder.relay.encode(envelope)
-        req.timeoutInterval = 10
+        var lastError: Error?
 
-        let (_, response) = try await URLSession.shared.data(for: req)
-        guard let http = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
+        for candidate in candidateURLs {
+            let url = candidate.appendingPathComponent("send")
+            var req = URLRequest(url: url)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.httpBody = try JSONEncoder.relay.encode(envelope)
+            req.timeoutInterval = 8
+
+            do {
+                let (_, response) = try await URLSession.shared.data(for: req)
+                guard let http = response as? HTTPURLResponse else {
+                    throw URLError(.badServerResponse)
+                }
+                guard (200...299).contains(http.statusCode) else {
+                    throw URLError(.badServerResponse)
+                }
+
+                activeBaseURL = candidate
+                return
+            } catch {
+                lastError = error
+                if let urlError = error as? URLError, urlError.code == .timedOut {
+                    continue
+                }
+            }
         }
-        guard (200...299).contains(http.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
+
+        throw lastError ?? URLError(.badServerResponse)
     }
 
     func startListening(recipientId: String, onMessage: @escaping (Envelope) -> Void) {
@@ -49,7 +70,8 @@ final class RESTBackend: MessageBackend {
 
     private func pollOnce(recipientId: String, onMessage: @escaping (Envelope) -> Void) async {
         do {
-            var comps = URLComponents(url: baseURL.appendingPathComponent("messages"),
+            let base = activeBaseURL
+            var comps = URLComponents(url: base.appendingPathComponent("messages"),
                                       resolvingAgainstBaseURL: false)!
             comps.queryItems = [URLQueryItem(name: "recipient", value: recipientId)]
             let (data, _) = try await URLSession.shared.data(from: comps.url!)
@@ -60,6 +82,7 @@ final class RESTBackend: MessageBackend {
             }
         } catch {
             // Ignore transient network errors during the demo.
+            // A short-lived timeout on startup is common; the next poll will retry.
         }
     }
 }
