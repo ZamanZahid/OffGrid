@@ -15,8 +15,10 @@ struct RelayView: View {
             HStack(spacing: 12) {
                 ConnectivityBadge()
                 Spacer()
-                peerBadge
-                serverBadge
+                VStack(alignment: .trailing, spacing: 8) {
+                    peerBadge
+                    serverBadge
+                }
             }
             .onAppear { checkServerHealth() }
             .onReceive(Timer.publish(every: 3.0, on: .main, in: .common).autoconnect()) { _ in
