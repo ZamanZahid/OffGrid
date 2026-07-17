@@ -35,3 +35,6 @@ quad/test_dist.py
 quad/test_detect2.py
 quad/debug_*.py
 .idea/
+
+
+.venv

@@ -101,8 +101,16 @@ For testing pourposes to run the server you need 3 devices, 2 external (phones),
 To run the relay server on your Macs:
 
 ```bash
-cd /path/to/Offgrid\
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 nohup ./.venv/bin/python3 server/server.py > /tmp/offgrid-server.log 2>&1 &
+```
+
+After that, if you want to start it again later, you can run:
+
+```bash
+python3 server/server.py
 ```
 
 ---
