@@ -9,7 +9,7 @@ AeroGaze fixes the first one, point your phone at the night sky and it works out
   <tr>
     <td align="center"><img src="Images/Home_Image.PNG" width="250"/><br/>test1</td>
     <td align="center"><img src="Images/Home_Description.PNG" width="250"/><br/>test1</td>
-    <td align="center"><img src="Images/Sender_Initial.PNG" width="250"/><br/>test1</td>
+    <td align="center"><img src="Images/Sender_Initial.PNG"  width="250"/><br/>test1</td>
   </tr>
   <tr>
     <td align="center"><img src="Images/Relay_Initial.PNG" width="250"/><br/>test1</td>
