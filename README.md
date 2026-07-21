@@ -5,26 +5,30 @@ Doesn't matter if you're in the middle of the ocean, lost in a forest, in the mi
 
 AeroGaze fixes the first one, point your phone at the night sky and it works out your exact position, no satellites, no towers, no internet. Relay fixes the second problem, as it hands your message off to a nearby stranger's phone (encrypted, so they can't read it, and works kind of like Apple's Find My, but for messages), which passes it along until it reaches the internet, without ever being able to read it.
 
+
+
+Here's what it looks like in action:
+
 <table>
   <tr>
-    <td align="center"><img src="Images/Home_Image.PNG" width="250"/><br/>This is the home page of the app.</td>
-    <td align="center"><img src="Images/Home_Description.PNG" width="250"/><br/>This is the about section.</td>
-    <td align="center"><img src="Images/Inbox_Initial.PNG" width="250"/><br/>This is what shows up when you first open the "sender" button in the home page, its trying to search for nearby devices.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Home_Image.PNG" width="250"/><br/>The home screen. This is where you pick what this device is doing: Sender, Relay, Recipient or using AeroGaze.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Home_Description.PNG" width="250"/><br/>The About page, opened from the "?" button in the bottom right of the home page. It explains what the app does.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Sender_Initial.PNG" width="250"/><br/>The Sender screen searching for a nearby relay device to hand its message off to.</td>
   </tr>
   <tr>
-    <td align="center"><img src="Images/Relay_Initial.PNG" width="250"/><br/>This is what shows up if you click the relay button in the home page its job is to connect to the sender and recipint, "its the middle man".</td>
-    <td align="center"><img src="Images/Sender_Initial.PNG" width="250"/><br/>This is what shows up if you have the recipient button opened, its where any messages can be found.</td>
-    <td align="center"><img src="Images/AeroGaze_Initial.PNG" width="250"/><br/>THis is the aerogaze part of the app, if you take a picture of the night sky it tells you your exact position, so you can text others with the sender feature</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Relay_Initial.PNG" width="250"/><br/>The Relay screen before it's found anyone. No sender or recipient connected yet."</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Inbox_Initial.PNG" width="250"/><br/>The Recipient inbox before anything has come in. It's connected and just waiting.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/AeroGaze_Initial.PNG" width="250"/><br/>The AeroGaze part. Take a photo of the night sky or pick one from your library, and it'll solve to your position.</td>
   </tr>
   <tr>
-    <td align="center"><img src="Images/Sender_SD_Found.PNG" width="250"/><br/>This is what happens when you device "the sender" gets connected to a "relay device" and now you are ale to send a message </td>
-    <td align="center"><img src="Images/Relay_Found.PNG" width="250"/><br/>This is what you see as the relay device, it shows that you are connected to a sender device and a recipient</td>
-  <td></td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Sender_SD_Found.PNG" width="250"/><br/>The Sender once it's found a relay. Now it's ready to type and send a message.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Relay_Found.PNG" width="250"/><br/>The Relay once it's connected to both a sender and a recipient.</td>
+    <td align="center" valign="top" width="33.33%"></td>
   </tr>
   <tr>
-    <td align="center"><img src="Images/Sender_Message_Send.PNG" width="250"/><br/>This is what the sender sees when they have successfully send a message and it has been deleviered to the recipient</td>
-    <td align="center"><img src="Images/Relay_Deleviered.PNG" width="250"/><br/>This is what is shown for the relay device its encrypted and its only job is to increase the distance of the message</td>
-    <td align="center"><img src="Images/Inbox_Message.PNG" width="250"/><br/>This is how it should finally look once the person has recievend the message.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Sender_Message_Send.PNG" width="250"/><br/>The Sender's delivery status once the message has been sent, relayed, and delivered.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Relay_Deleviered.PNG" width="250"/><br/>What the Relay sees. Just encrypted text passing through, its only job is carrying it further.</td>
+    <td align="center" valign="top" width="33.33%"><img src="Images/Inbox_Message.PNG" width="250"/><br/>The Recipient's inbox once the message arrives, decrypted and readable.</td>
   </tr>
 </table>
 
